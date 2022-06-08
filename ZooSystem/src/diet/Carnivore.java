@@ -42,7 +42,7 @@ public class Carnivore implements IDiet{
 	public boolean canEat(EFoodType food) 
 	{
 		boolean isSuccess = food.equals(EFoodType.MEAT);
-		MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
+		//MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
 		return isSuccess;
 	}
 

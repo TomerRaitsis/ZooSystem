@@ -41,7 +41,7 @@ public class Herbivore implements IDiet {
 	@Override
 	public boolean canEat(EFoodType food) {
 		boolean isSuccess = food.equals(EFoodType.VEGETABLE);
-		MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
+		//MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
 		return isSuccess;
 	}
 

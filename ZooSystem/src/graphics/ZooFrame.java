@@ -148,7 +148,7 @@ public class ZooFrame extends JFrame implements ActionListener {
 			dial.setVisible(true);
 		
 		if (e.getSource() == b) // hide help window
-			dial.setVisible(false);
+			dial.dispose();
 	}
 	
 

@@ -222,6 +222,7 @@ public class AddAnimalDialog extends JDialog {
 								|| tf2.getText().equals(""));
 						String name;
 						String s = cb1.getSelectedItem().toString();
+						setVisible(false);
 						switch (s) {
 						case "Lion":
 							if (check)
@@ -230,7 +231,7 @@ public class AddAnimalDialog extends JDialog {
 								name = tf2.getText();
 							a = new Lion(name, Integer.parseInt(tf.getText()),
 									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c);
+									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
 							break;
 						case "Bear":
 							if (check)
@@ -239,7 +240,7 @@ public class AddAnimalDialog extends JDialog {
 								name = tf2.getText();
 							a = new Bear(name, Integer.parseInt(tf.getText()),
 									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c);
+									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
 							break;
 						case "Elephant":
 							if (check)
@@ -248,7 +249,7 @@ public class AddAnimalDialog extends JDialog {
 								name = tf2.getText();
 							a = new Elephant(name, Integer.parseInt(tf.getText()),
 									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c);
+									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
 							break;
 						case "Giraffe":
 							if (check)
@@ -257,7 +258,7 @@ public class AddAnimalDialog extends JDialog {
 								name = tf2.getText();
 							a = new Giraffe(name, Integer.parseInt(tf.getText()),
 									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c);
+									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
 							break;
 						case "Turtle":
 							if (check)
@@ -266,8 +267,9 @@ public class AddAnimalDialog extends JDialog {
 								name = tf2.getText();
 							a = new Turtle(name, Integer.parseInt(tf.getText()),
 									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c);
+									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
 							break;
+							
 						}
 
 						JFrame f = new JFrame();
@@ -275,7 +277,7 @@ public class AddAnimalDialog extends JDialog {
 						try {
 							f.setIconImage(ImageIO.read(new File(IDrawable.PICTURE_PATH + "zoo.png")));
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
+
 							e1.printStackTrace();
 						}
 						PanelDrawing pd = new PanelDrawing();
@@ -289,12 +291,19 @@ public class AddAnimalDialog extends JDialog {
 						bt.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
+								
 								a.setChanges(true);
-								a.setPan(zp);
+								//a.setPan(zp);
 								Animals.add(a);
-								zp.manageZoo();
-								f.setVisible(false);
-								setVisible(false);
+								zp.repaint();
+								if (zp.CheckIfSuspended())
+									a.setSuspended();
+								a.setThread(new Thread(a));
+								a.getThread().start();
+								
+								
+								f.dispose();
+								dispose();
 							}
 						});
 						f.add(new JLabel("Please press OK to approve your choice...", JLabel.CENTER),

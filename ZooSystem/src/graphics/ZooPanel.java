@@ -1,9 +1,9 @@
- /**
-    * @author 
-    * Tomer Raitsis 316160167
-    * SCE, Ashdod
-    *    
-    */
+/**
+   * @author 
+   * Tomer Raitsis 316160167
+   * SCE, Ashdod
+   *    
+   */
 package graphics;
 
 import java.awt.BorderLayout;
@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -44,8 +45,7 @@ import mobility.Point;
 import plants.Plant;
 
 /**
- * A panel that is devided to 2 different panels that work together:
- * 1. buttons
+ * A panel that is devided to 2 different panels that work together: 1. buttons
  * 2. screen to show the animals and background
  * 
  */
@@ -56,6 +56,7 @@ public class ZooPanel extends JPanel implements Runnable {
 	JTable table = new JTable();
 	IEdible Food;
 	PanelDrawing p = new PanelDrawing(Animals, Food);
+	private Thread controller;
 
 	/**
 	 * A ctor, builds the two inner panels and sets the buttons
@@ -109,7 +110,7 @@ public class ZooPanel extends JPanel implements Runnable {
 			}
 		});
 
-		JButton but2 = new JButton("Move Animal");
+		JButton but2 = new JButton("Sleep");
 		but2.setBackground(new Color(59, 89, 182));
 		but2.setForeground(Color.WHITE);
 		but2.setFocusPainted(false);
@@ -117,16 +118,28 @@ public class ZooPanel extends JPanel implements Runnable {
 		but2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				if (Animals.size() > 0 && Animals.size() <= 10) {
-					new MoveAnimalDialog(Animals, getPan());
-				} else if (Animals.size() == 0) {
-					lab1.setText("There are 0 animals in the zoo!");
-					dial.setVisible(true);
+				for (int i = 0; i < Animals.size(); i++) {
+					Animals.get(i).setSuspended();
 				}
-				manageZoo();
 			}
 		});
+
+		JButton but7 = new JButton("Wake up");
+		but7.setBackground(new Color(59, 89, 182));
+		but7.setForeground(Color.WHITE);
+		but7.setFocusPainted(false);
+		but7.setFont(new Font("Tahoma", Font.BOLD, 12));
+		but7.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < Animals.size(); i++) {
+					Animals.get(i).setResumed();
+
+				}
+
+			}
+		});
+
 		JButton but3 = new JButton("Clear");
 		but3.setBackground(new Color(59, 89, 182));
 		but3.setForeground(Color.WHITE);
@@ -135,8 +148,12 @@ public class ZooPanel extends JPanel implements Runnable {
 		but3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < Animals.size(); i++) {
+					Animals.get(i).shut();
+				}
 				Animals.clear();
 				repaint();
+
 			}
 		});
 
@@ -176,9 +193,9 @@ public class ZooPanel extends JPanel implements Runnable {
 			public void actionPerformed(ActionEvent e) {
 				Food = new Lettuce();
 				((Lettuce) Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
-				FoodDialog.setVisible(false);
-				// repaint();
-				manageZoo();
+				FoodDialog.dispose();
+				repaint();
+				// manageZoo();
 			}
 		});
 		JButton b2 = new JButton("Cabbage");
@@ -191,9 +208,10 @@ public class ZooPanel extends JPanel implements Runnable {
 			public void actionPerformed(ActionEvent e) {
 				Food = new Cabbage();
 				((Cabbage) Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
-				FoodDialog.setVisible(false);
-				// repaint();
-				manageZoo();
+				FoodDialog.dispose();
+				;
+				repaint();
+				// manageZoo();
 			}
 		});
 		JButton b3 = new JButton("Meat");
@@ -210,9 +228,10 @@ public class ZooPanel extends JPanel implements Runnable {
 					}
 				};
 				Food = meat;
-				FoodDialog.setVisible(false);
-				// repaint();
-				manageZoo();
+				FoodDialog.dispose();
+				;
+				repaint();
+				// manageZoo();
 			}
 		});
 		foods.add(b1);
@@ -249,14 +268,18 @@ public class ZooPanel extends JPanel implements Runnable {
 		but6.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < Animals.size(); i++) {
+					Animals.get(i).shut();
+				}
 				System.exit(0);
 			}
 		});
 
 		panel.setBackground(Color.DARK_GRAY);
-		panel.setLayout(new GridLayout(1, 6, 10, 5));
+		panel.setLayout(new GridLayout(1, 7, 10, 5));
 		panel.add(but1);
 		panel.add(but2);
+		panel.add(but7);
 		panel.add(but3);
 		panel.add(but4);
 		panel.add(but5);
@@ -265,7 +288,9 @@ public class ZooPanel extends JPanel implements Runnable {
 		p = new PanelDrawing(Animals, Food);
 		p.setLayout(null);
 		this.add(p, BorderLayout.CENTER);
-		// manageZoo();
+
+		this.controller = new Thread(this);
+		this.controller.start();
 	}
 
 	/**
@@ -283,7 +308,7 @@ public class ZooPanel extends JPanel implements Runnable {
 	 * A method to change the backround to nothing
 	 * 
 	 * @version 1.0
-
+	 * 
 	 */
 	public void ChangeBackgroudToNone() {
 		p.setImage(null);
@@ -321,27 +346,11 @@ public class ZooPanel extends JPanel implements Runnable {
 	 * A method that returns this zoo panel
 	 * 
 	 * @version 1.0
-
+	 * 
 	 * @return ZooPanel
 	 */
 	public ZooPanel getPan() {
 		return this;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @version 1.0
-	 * 
-	 * @param
-	 * 
-	 * @return
-	 * 
-	 * @see
-	 */
-	@Override
-	public void run() {
-
 	}
 
 	/**
@@ -361,62 +370,7 @@ public class ZooPanel extends JPanel implements Runnable {
 		return false;
 	}
 
-	/**
-	 * A method that checks 2 things:
-	 * 1. if an animal can eat an animal, by the rules below:
-	 * 		- Not the same animal
-	 * 		- the animal that eats is bigger by 2 than the prey
-	 * 		- the distance between the two animals is not bigger than the prey itself
-	 * 
-	 * 2. if an animal can eat some food, by the rules below:
-	 * 		- Food is not null
-	 * 		- the distance between them is not bigger than 10 (not in x and not in y cordinates)
-	 * 
-	 * 
-	 * @version 1.0
-	 */
-	public void manageZoo() {
-		boolean c = true;
-		if (isChange())
-			this.repaint();
-		while (c) {
-			c = false;
-			for (Animal a : Animals) {
-				for (Animal b : Animals) {
-					if (a != b) {
-						if (a.getWeight() > (2 * b.getWeight())) {
-							if (a.calcDistance(b.getLocation()) < b.getSize()) {
-								if (a.eat(b)) {
-									a.eatInc();
-									Animals.remove(b);
-									this.repaint();
-									c = true;
-									break;
-								}
-							}
-						}
-					}
-				}
-				if (c)
-					break;
-			}
-		}
-		if (Food != null) {
-			this.repaint();
-			for (Animal a : Animals) {
-				if (Math.abs(a.getLocation().GetX() - (p.getWidth() / 2)) <= a.getEAT_DISTANCE()
-						&& Math.abs(a.getLocation().GetY() - (p.getHeight() / 2)) <= a.getEAT_DISTANCE()) {
-					if (a.eat(Food)) {
-						a.eatInc();
-						Food = null;
-						this.repaint();
-						break;
-					}
-				}
-			}
-		}
-	}
-
+	
 	/**
 	 * An override to paintComponent, shows the background, animals and food on the
 	 * screen that shows the animals and background
@@ -432,4 +386,104 @@ public class ZooPanel extends JPanel implements Runnable {
 		p.paintAnimal(g, Food);
 	}
 
+	/**
+	 * A method that checks is the animal are suspended or not
+	 * 
+	 * @version 1.0
+	 * 
+	 * @return true if suspended, false if not
+	 */
+	public synchronized boolean CheckIfSuspended() {
+		for (int i = 0; i < Animals.size(); i++) {
+			if (Animals.get(i).isTreadSuspended())
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * A run method, for the controller, this thread starts to run at the end of the Ctor
+	 * 
+	 * Checks if there are any animals that can eat each other, or if an animal eats the
+	 * food at the center (if not the animal will keep moving) and it will move to it until 
+	 * it is close enough to eat it or another animal ate ot first 
+	 * 
+	 * @version 1.0
+	 * 
+	 */
+	@Override
+	public void run() {
+		while (true) {
+			if (!CheckIfSuspended()) {
+				boolean c = false;
+
+				if (isChange())
+						this.repaint();
+				
+				for (int i = 0; i < Animals.size(); i++) {
+					Animal a = Animals.get(i);
+
+					for (int j = 0; j < Animals.size(); j++) {
+						Animal b = Animals.get(j);
+
+						if (a != b) {
+							if (a.getWeight() > (2 * b.getWeight())) {
+								if (a.calcDistance(b.getLocation()) < b.getSize()) {
+											if (a.eat(b)) {
+												a.eatInc();
+												b.shut();
+												Animals.remove(b);
+												c = true;
+												break;
+											}
+								}
+							}
+						}
+					}
+					if (c)
+						break;
+
+				}
+				
+				if (Food != null) {
+					
+					for (int i = 0; i < Animals.size(); i++) {
+						Animal a = Animals.get(i);
+						
+							if (a.getDiet().canEat(Food.getFoodtype())) {
+								a.setToCenter();
+								if (Math.abs(a.getLocation().GetX() - (400)) <= a.getEAT_DISTANCE()
+										&& Math.abs(a.getLocation().GetY() - (300)) <= a.getEAT_DISTANCE()) {
+
+									if (a.eat(Food)) {
+										a.eatInc();
+
+										a.setbackX();
+										a.setY_dir(1);
+
+										
+										for (int j = 0; j < Animals.size(); j++) {
+											Animal d = Animals.get(j);
+											if (i != j && d.getDiet().canEat(Food.getFoodtype())) {
+												d.setbackX();
+												d.setY_dir(-1);
+											} 
+										}
+										Food = null;
+										break;
+									}
+								}
+							} else {
+								if (!a.getFlag().get()) {
+									a.setFlag(true);
+									a.setY_dir(1);
+								}
+							}
+						
+					}
+				}
+				
+			}
+		}
+	}
 }

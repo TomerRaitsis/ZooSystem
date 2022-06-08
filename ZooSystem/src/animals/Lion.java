@@ -10,6 +10,7 @@ import food.EFoodType;
 import food.IEdible;
 import graphics.IDrawable;
 import graphics.PanelDrawing;
+import graphics.ZooPanel;
 import mobility.Point;
 import utilities.MessageUtility;
 
@@ -42,20 +43,20 @@ public class Lion extends RoarAnimal {
 	 */
 	public Lion(String s, Point p) {
 		super(s, p);
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.scarCount = 0;
 		this.setWeight(408.2);
 		this.setDiet(new Carnivore());
-
 	}
 
-	public Lion(String s, int size, int horSpeed, int verSpeed, Color col) {
+	public Lion(String s, int size, int horSpeed, int verSpeed, Color col,ZooPanel zp) {
 		this(s, new Point(20, 0));
 		this.setSize(size);
 		this.setHorSpeed(horSpeed);
 		this.setVerSpeed(verSpeed);
 		this.setCol(col);
 		this.setWeight(size * 0.8);
+		this.setPan(zp);
 	}
 
 	/**
@@ -81,7 +82,7 @@ public class Lion extends RoarAnimal {
 	 */
 	@Override
 	public EFoodType getFoodtype() {
-		MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.NOTFOOD);
+		//MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.NOTFOOD);
 		return EFoodType.NOTFOOD;
 	}
 
@@ -95,7 +96,7 @@ public class Lion extends RoarAnimal {
 	 * @return None (void)
 	 */
 	public void roar() {
-		MessageUtility.logSound(this.getName(), "Roars, then stretches and shakes its mane");
+		//MessageUtility.logSound(this.getName(), "Roars, then stretches and shakes its mane");
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class Lion extends RoarAnimal {
 	 * @return int of the number of scars
 	 */
 	public int getScarCount() {
-		MessageUtility.logGetter(this.getName(), "getScarCount", scarCount);
+		//MessageUtility.logGetter(this.getName(), "getScarCount", scarCount);
 		return scarCount;
 	}
 
@@ -153,7 +154,7 @@ public class Lion extends RoarAnimal {
 		boolean isSuccess = scarCount > 0;
 		if (isSuccess)
 			this.scarCount = scarCount;
-		MessageUtility.logSetter(this.getName(), "setScarCount", scarCount, isSuccess);
+		//MessageUtility.logSetter(this.getName(), "setScarCount", scarCount, isSuccess);
 		return isSuccess;
 	}
 
@@ -195,17 +196,7 @@ public class Lion extends RoarAnimal {
 	}
 
 
-	public static void main(String[] args) {
 
-		PanelDrawing pd = new PanelDrawing();
-		JFrame f = new JFrame();
-		Lion l = new Lion("1", 200, 1, 1, null);
-		// l.setPan(pd);
-		pd.repaint();
-		f.add(pd);
-		f.setVisible(true);
-
-	}
 
 	@Override
 	public String getAnimalName() {

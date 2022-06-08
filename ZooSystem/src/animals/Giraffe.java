@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import diet.Herbivore;
 import food.EFoodType;
 import graphics.IDrawable;
+import graphics.ZooPanel;
 import mobility.Point;
 import utilities.MessageUtility;
 
@@ -39,19 +40,20 @@ public class Giraffe extends ChewAnimal {
 	 */
 	public Giraffe(String s, Point p) {
 		super(s, p);
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(450);
 		this.setNeckLength(1.5);
 		this.setDiet(new Herbivore());
 	}
 
-	public Giraffe(String s, int size, int horSpeed, int verSpeed, Color col) {
+	public Giraffe(String s, int size, int horSpeed, int verSpeed, Color col,ZooPanel zp) {
 		this(s, new Point(50, 0));
 		this.setSize(size);
 		this.setHorSpeed(horSpeed);
 		this.setVerSpeed(verSpeed);
 		this.setCol(col);
 		this.setWeight(size * 2.2);
+		this.setPan(zp);
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class Giraffe extends ChewAnimal {
 	 */
 	public Giraffe(String s, int i) {
 		super(s, new Point(50, 0));
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(450);
 		this.setNeckLength(i);
 		this.setDiet(new Herbivore());
@@ -92,7 +94,7 @@ public class Giraffe extends ChewAnimal {
 	 */
 	@Override
 	public EFoodType getFoodtype() {
-		MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
+		//MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
 		return EFoodType.MEAT;
 	}
 
@@ -107,7 +109,7 @@ public class Giraffe extends ChewAnimal {
 	 * 
 	 */
 	public double getneckLength() {
-		MessageUtility.logGetter(this.getName(), "getneckLength", neckLength);
+		//MessageUtility.logGetter(this.getName(), "getneckLength", neckLength);
 		return neckLength;
 	}
 
@@ -127,7 +129,7 @@ public class Giraffe extends ChewAnimal {
 			this.neckLength = neckLength;
 		else
 			this.neckLength = 1.5;
-		MessageUtility.logSetter(this.getName(), "setneckLength", neckLength, isSuccess);
+		//MessageUtility.logSetter(this.getName(), "setneckLength", neckLength, isSuccess);
 		return isSuccess;
 	}
 
@@ -141,7 +143,7 @@ public class Giraffe extends ChewAnimal {
 	 * @return None (void)
 	 */
 	public void chew() {
-		MessageUtility.logSound(this.getName(), "Bleats and Stomps its legs, then chews");
+		//MessageUtility.logSound(this.getName(), "Bleats and Stomps its legs, then chews");
 	}
 
 	@Override

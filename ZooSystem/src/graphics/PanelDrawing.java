@@ -1,9 +1,9 @@
- /**
-    * @author 
-    * Tomer Raitsis 316160167
-    * SCE, Ashdod
-    *    
-    */
+/**
+   * @author 
+   * Tomer Raitsis 316160167
+   * SCE, Ashdod
+   *    
+   */
 package graphics;
 
 import java.awt.Graphics;
@@ -28,7 +28,7 @@ import plants.Cabbage;
 import plants.Lettuce;
 
 /**
- *  A panel that used to draw animals, food or the background on it
+ * A panel that used to draw animals, food or the background on it
  * 
  * @version 1.0
  */
@@ -39,7 +39,7 @@ public class PanelDrawing extends JPanel {
 	private IEdible food;
 
 	/**
-	 *  A Ctor that doesnt get anything
+	 * A Ctor that doesnt get anything
 	 * 
 	 * @version 1.0
 	 * 
@@ -49,7 +49,7 @@ public class PanelDrawing extends JPanel {
 	}
 
 	/**
-	 *  A Ctor that gets an animals (ArrayList) and a food (IEdible)
+	 * A Ctor that gets an animals (ArrayList) and a food (IEdible)
 	 * 
 	 * @version 1.0
 	 * 
@@ -61,13 +61,13 @@ public class PanelDrawing extends JPanel {
 	}
 
 	/**
-	 *  An override to paintComponent, used to paint all the objects and background uses 
-	 * paintAnimal method 
+	 * An override to paintComponent, used to paint all the objects and background
+	 * uses paintAnimal method
 	 * 
 	 * @version 1.0
 	 * 
-	 * @param g - Graphics 
-
+	 * @param g - Graphics
+	 * 
 	 * @see paintAnimal
 	 */
 	@Override
@@ -76,10 +76,11 @@ public class PanelDrawing extends JPanel {
 		Graphics2D gr = (Graphics2D) g;
 		gr.drawImage(imgSce, 0, 0, this.getWidth(), this.getHeight(), null);
 		paintAnimal(gr, food);
+
 	}
 
 	/**
-	 *  A method to draw food and animals on the screen, used in paintComponent
+	 * A method to draw food and animals on the screen, used in paintComponent
 	 * 
 	 * @version 1.0
 	 * 
@@ -89,10 +90,12 @@ public class PanelDrawing extends JPanel {
 	 */
 	public void paintAnimal(Graphics g, IEdible f) {
 		if (Animals != null) {
-			for (int i = 0; i < Animals.size(); i++) {
-				Animals.get(i).loadImages(Animals.get(i).getColor());
-				Animals.get(i).drawObject(g);
-			}
+			try {
+				for (int i = 0; i < Animals.size(); i++) {
+					Animals.get(i).loadImages(Animals.get(i).getColor());
+					Animals.get(i).drawObject(g);
+				}
+			} catch (IndexOutOfBoundsException e) {}
 		}
 
 		this.food = f;
@@ -105,9 +108,8 @@ public class PanelDrawing extends JPanel {
 				((Cabbage) food).drawObject(g);
 			} else {
 				try {
-					g.drawImage(
-							ImageIO.read(new File(IDrawable.PICTURE_PATH + "meat.gif")),
-							((int) this.getWidth() / 2) - 20 / 2 , ((int) this.getHeight() / 2) - 20 / 2 , 20, 20, this);
+					g.drawImage(ImageIO.read(new File(IDrawable.PICTURE_PATH + "meat.gif")),
+							((int) this.getWidth() / 2) - 20 / 2, ((int) this.getHeight() / 2) - 20 / 2, 20, 20, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -116,7 +118,7 @@ public class PanelDrawing extends JPanel {
 	}
 
 	/**
-	 *  A method that sets the image fo the background
+	 * A method that sets the image fo the background
 	 * 
 	 * @version 1.0
 	 * 

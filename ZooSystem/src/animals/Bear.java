@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import diet.Omnivore;
 import food.EFoodType;
 import graphics.IDrawable;
+import graphics.ZooPanel;
 import mobility.Point;
 import utilities.MessageUtility;
 
@@ -39,20 +40,20 @@ public class Bear extends RoarAnimal {
 	 */
 	public Bear(String s, Point p) {
 		super(s, p);
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(308.2);
 		this.setFurColor("GRAY");
 		this.setDiet(new Omnivore());
-
 	}
 
-	public Bear(String s, int size, int horSpeed, int verSpeed, Color col) {
+	public Bear(String s, int size, int horSpeed, int verSpeed, Color col,ZooPanel zp) {
 		this(s, new Point(100, 5));
 		this.setSize(size);
 		this.setHorSpeed(horSpeed);
 		this.setVerSpeed(verSpeed);
 		this.setCol(col);
 		this.setWeight(size * 1.5);
+		this.setPan(zp);
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class Bear extends RoarAnimal {
 	 */
 	public Bear(String s, String string) {
 		super(s, new Point(100, 5));
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(308.2);
 		this.setFurColor(string);
 		this.setDiet(new Omnivore());
@@ -94,7 +95,7 @@ public class Bear extends RoarAnimal {
 	 */
 	@Override
 	public EFoodType getFoodtype() {
-		MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
+		//MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
 		return EFoodType.MEAT;
 	}
 
@@ -107,7 +108,7 @@ public class Bear extends RoarAnimal {
 	 * 
 	 */
 	public String getFurColor() {
-		MessageUtility.logGetter(this.getName(), "getFurColor", furColor);
+		//MessageUtility.logGetter(this.getName(), "getFurColor", furColor);
 		return furColor;
 	}
 
@@ -125,9 +126,9 @@ public class Bear extends RoarAnimal {
 		boolean isSuccess = furColor.equals("BLACK") || furColor.equals("WHITE") || furColor.equals("GRAY");
 		if (isSuccess) {
 			this.furColor = furColor;
-			MessageUtility.logSetter(this.getName(), "setFurColor", furColor, isSuccess);
+			//MessageUtility.logSetter(this.getName(), "setFurColor", furColor, isSuccess);
 		} else {
-			MessageUtility.logSetter(this.getName(), "setFurColor", furColor, isSuccess);
+			//MessageUtility.logSetter(this.getName(), "setFurColor", furColor, isSuccess);
 			this.setFurColor("GRAY");
 		}
 		return isSuccess;
@@ -143,7 +144,7 @@ public class Bear extends RoarAnimal {
 	 * @return None (void)
 	 */
 	public void roar() {
-		MessageUtility.logSound(this.getName(), "Stands on its hind legs, roars and scratches its belly");
+		//MessageUtility.logSound(this.getName(), "Stands on its hind legs, roars and scratches its belly");
 	}
 
 	@Override
@@ -188,5 +189,7 @@ public class Bear extends RoarAnimal {
 	public String getAnimalName() {
 		return this.getClass().getSimpleName();
 	}
+
+
 
 }

@@ -69,4 +69,8 @@ public interface IAnimalBehavior {
 	 * 
 	 */
 	public void setChanges(boolean state);
+	
+	public void setSuspended();
+	
+	public void setResumed();
 }

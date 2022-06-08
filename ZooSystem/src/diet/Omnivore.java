@@ -48,7 +48,7 @@ public class Omnivore implements IDiet {
 	@Override
 	public boolean canEat(EFoodType food) {
 		boolean isSuccess = C.canEat(food) || H.canEat(food);
-		MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
+		//MessageUtility.logBooleanFunction(this.getClass().getSimpleName(), "canEat", food, isSuccess);
 		return isSuccess;
 	}
 

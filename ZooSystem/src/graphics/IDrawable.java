@@ -16,7 +16,7 @@ import java.awt.Graphics;
  * 
  */
 public interface IDrawable {
-	public final static String PICTURE_PATH = "C:/Users/tomer/OneDrive/щемзп дтбегд/JAVA тбегд 2/дешаеъ/";
+	public final static String PICTURE_PATH = "C:/Users/tomer/OneDrive/Ч©Ч•ЧњЧ—Чџ Ч”ЧўЧ‘Ч•Ч“Ч”/ЧўЧ‘Ч•Ч“Ч” 3 JAVA/ЧЄЧћЧ•Ч Ч•ЧЄ/";
 	
 	/**
 	 *  A method to load the animal's images 

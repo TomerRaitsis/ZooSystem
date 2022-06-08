@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import diet.Herbivore;
 import food.EFoodType;
 import graphics.IDrawable;
+import graphics.ZooPanel;
 import mobility.Point;
 import utilities.MessageUtility;
 
@@ -39,19 +40,20 @@ public class Elephant extends ChewAnimal {
 	 */
 	public Elephant(String s, Point p) {
 		super(s, p);
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(500);
 		this.settrunkLength(1);
 		this.setDiet(new Herbivore());
 	}
 
-	public Elephant(String s, int size, int horSpeed, int verSpeed, Color col) {
+	public Elephant(String s, int size, int horSpeed, int verSpeed, Color col,ZooPanel zp) {
 		this(s, new Point(50, 90));
 		this.setSize(size);
 		this.setHorSpeed(horSpeed);
 		this.setVerSpeed(verSpeed);
 		this.setCol(col);
 		this.setWeight(size * 10);
+		this.setPan(zp);
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class Elephant extends ChewAnimal {
 	 */
 	public Elephant(String s, int i) {
 		super(s, new Point(50, 90));
-		MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
+		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(500);
 		this.settrunkLength(i);
 		this.setDiet(new Herbivore());
@@ -92,7 +94,7 @@ public class Elephant extends ChewAnimal {
 	 */
 	@Override
 	public EFoodType getFoodtype() {
-		MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
+		//MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
 		return EFoodType.MEAT;
 	}
 
@@ -108,7 +110,7 @@ public class Elephant extends ChewAnimal {
 	 * @see
 	 */
 	public double getTrunkLength() {
-		MessageUtility.logGetter(this.getName(), "getTrunkLength", trunkLength);
+		//MessageUtility.logGetter(this.getName(), "getTrunkLength", trunkLength);
 		return trunkLength;
 	}
 
@@ -127,7 +129,7 @@ public class Elephant extends ChewAnimal {
 			this.trunkLength = trunkLength;
 		else
 			this.trunkLength = 1;
-		MessageUtility.logSetter(this.getName(), "setTrunkLength", trunkLength, isSuccess);
+		//MessageUtility.logSetter(this.getName(), "setTrunkLength", trunkLength, isSuccess);
 		return isSuccess;
 	}
 
@@ -141,7 +143,7 @@ public class Elephant extends ChewAnimal {
 	 * @return None (void)
 	 */
 	public void chew() {
-		MessageUtility.logSound(this.getName(), "Trumpets with joy while flapping its ears, then chews");
+		//MessageUtility.logSound(this.getName(), "Trumpets with joy while flapping its ears, then chews");
 	}
 
 	@Override
