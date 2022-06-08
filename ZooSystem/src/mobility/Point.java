@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis  
+    * Tomer Raitsis 316160167
     * SCE, Ashdod
     */
 package mobility;
@@ -78,6 +78,6 @@ public class Point {
  */
 	public static boolean cheackBounderies(Point newLocation)
 	{
-		return (newLocation.GetX() < Point.MaxX) && (newLocation.GetX() >= Point.Min) && (newLocation.GetY() < Point.MaxY) && (newLocation.GetY() >= Point.Min);
+		return (newLocation.GetX() <= Point.MaxX) && (newLocation.GetX() >= Point.Min) && (newLocation.GetY() <= Point.MaxY) && (newLocation.GetY() >= Point.Min);
 	}
 }

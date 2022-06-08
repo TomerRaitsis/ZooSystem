@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis
+    * Tomer Raitsis 316160167
     * SCE, Ashdod
     *    
     */
@@ -8,9 +8,19 @@ package animals;
 import mobility.Mobile;
 import mobility.Point;
 import utilities.MessageUtility;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+
 import diet.IDiet;
 import diet.Omnivore;
 import food.IEdible;
+import graphics.IAnimalBehavior;
+import graphics.IDrawable;
+import graphics.ZooPanel;
 
 /**
  *  An abstract class that represent an animal, has different behaviore such as: eat, move and make sound. 
@@ -19,10 +29,23 @@ import food.IEdible;
  * @version 1.0
 
  */
-public abstract class Animal extends Mobile implements IEdible{
+public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnimalBehavior{
 	private String name;
 	private double weight;
 	private IDiet diet;
+	
+	private final int EAT_DISTANCE = 10;
+	private int size;
+	private Color col;
+	private int horSpeed;
+	private int verSpeed;
+	private boolean coordChanged;
+	private int x_dir = 1;
+	private int y_dir = 1;
+	private int eatCount;
+	private ZooPanel pan;
+	private BufferedImage img1, img2;
+	
 	
 	/**
 	 *  A Ctor, also calls the super Ctor (Mobility Ctor)
@@ -244,5 +267,386 @@ public abstract class Animal extends Mobile implements IEdible{
 		 Animal A = (Animal) o;
 		 
 		 return this.getName() == A.getName() && this.getWeight() == A.getWeight() && this.getDiet().getClass().getSimpleName() == A.getDiet().getClass().getSimpleName();
+	}
+
+	/**
+	 *  A method to get the eat distance of the animal
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return EAT_DISTANCE (an int)
+	 * 
+	 */
+	public int getEAT_DISTANCE() {
+		return EAT_DISTANCE;
+	}
+
+	/**
+	 *  A method to get the size f the animal
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return size (an int)
+	 * 
+	 */
+	public int getSize() {
+		return size;
+	}
+
+	/**
+	 * A method to set the size of the animal
+	 *  
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param The size
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	/**
+	 *  A method to get the color of the animal's picture
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return the Color (a Color object)
+	 * 
+	 * @see
+	 */
+	public Color getCol() {
+		return col;
+	}
+
+	/**
+	 *  A method to set the color of the animal's picture
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param The new color
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setCol(Color col) {
+		this.col = col;
+	}
+
+	/**
+	 *  A method to get the horizontal speed
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return the horizontal speed (an int)
+	 */
+	public int getHorSpeed() {
+		return horSpeed;
+	}
+
+	/**
+	 *  A method to set the horizontal speed
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param The new speed
+	 * 
+	 * @return None
+	 */
+	public void setHorSpeed(int horSpeed) {
+		this.horSpeed = horSpeed;
+	}
+
+	/**
+	 *  A method to get the vertical speed
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return the vertical speed (an int)
+	 */
+	public int getVerSpeed() {
+		return verSpeed;
+	}
+
+	/**
+	 *  A method to set the vertical speed
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param The new speed
+	 * 
+	 * @return None
+	 */
+	public void setVerSpeed(int verSpeed) {
+		this.verSpeed = verSpeed;
+	}
+
+	/**
+	 *  A method to get the x direction
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return X direction (an int0
+	 * 
+	 */
+	public int getX_dir() {
+		return x_dir;
+	}
+
+	/**
+	 *  A method to set the x direction
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param new direction (int)
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setX_dir(int x_dir) {
+		this.x_dir = x_dir;
+	}
+
+	/**
+	 *  A method to get the y direction
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return X direction (an int0
+	 * 
+	 */
+	public int getY_dir() {
+		return y_dir;
+	}
+
+	/**
+	 *  A method to set the y direction
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param new direction (int)
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setY_dir(int y_dir) {
+		this.y_dir = y_dir;
+	}
+
+	/**
+	 *  A method to get the eat count
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return eatCount (an int)
+	 * 
+	 */
+	public int getEatCount() {
+		return eatCount;
+	}
+
+	/**
+	 *  A method to set the eat count
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param new number (an int)
+	 * 
+	 * @return none
+	 * 
+	 */
+	public void setEatCount(int eatCount) {
+		this.eatCount = eatCount;
+	}
+
+	/**
+	 *  A method to get the animal's panel
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return The panel (ZooPanel) 
+	 * 
+	 */
+	public ZooPanel getPan() {
+		return pan;
+	}
+
+	/**
+	 *  A method to set the animal's panel
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param a panel (ZooPanel)
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setPan(ZooPanel pan) {
+		this.pan = pan;
+	}
+
+	/**
+	 *  A methd to get the animal img1
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return img1 (BufferedImage)
+	 * 
+	 */
+	public BufferedImage getImg1() {
+		return img1;
+	}
+
+	/**
+	 *  A methd to set the animal img1
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param an image (BufferedImage)
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setImg1(BufferedImage img1) {
+		this.img1 = img1;
+	}
+
+	/**
+	 *  A methd to get the animal img2
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return img1 (BufferedImage)
+	 * 
+	 */
+	public BufferedImage getImg2() {
+		return img2;
+	}
+
+	/**
+	 *  A methd to set the animal img2
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param an image (BufferedImage)
+	 * 
+	 * @return None
+	 * 
+	 */
+	public void setImg2(BufferedImage img2) {
+		this.img2 = img2;
+	}
+	/**
+	 *  A method to get the animal's picture color (String)
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return the color (String)
+	 * 
+	 */
+	@Override
+	public String getColor() {
+		Color r = this.getCol();
+		if (r == null)
+			return "Natural";
+		if (r == Color.blue)
+			return "Blue";
+		else
+			return "Red";		
+	}
+
+	/**
+	 *  A method to add 1 to the EatCount
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return None
+	 * 
+	 */
+	@Override
+	public void eatInc() {
+		this.setEatCount(this.getEatCount() + 1);
+
+	}
+
+	/**
+	 *  A method that returns true if there's been any changes in the animal
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param None
+	 * 
+	 * @return true if there's been any changes, false if not
+	 * 
+	 */
+	@Override
+	public boolean getChanges() {
+		return this.coordChanged;
+	}
+	/**
+	 *  A method that sets the "coordChanged" to the given state
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param state (boolean)
+	 * 
+	 * @return None
+	 * 
+	 */
+	@Override
+	public void setChanges(boolean state) {
+		this.coordChanged = state;
+
+	}
+	
+	/**
+	 *  A method to draw the animal on the screen
+	 * 
+	 * @version 1.0
+	 * 
+	 * @param g (Graphics)
+	 * 
+	 * @return None
+	 * 
+	 */
+	@Override
+	public void drawObject(Graphics g) {
+		Graphics2D gr = (Graphics2D) g;
+		gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		if (this.getX_dir() == 1)
+			g.drawImage(this.getImg1(), this.getLocation().GetX() - this.getSize() / 2,
+					this.getLocation().GetY() - this.getSize() / 2, this.getSize() / 2, this.getSize(), this.getPan());
+		else
+			g.drawImage(this.getImg2(), this.getLocation().GetX() - this.getSize() / 2,
+					this.getLocation().GetY() - this.getSize() / 2, this.getSize() / 2, this.getSize(), this.getPan());
+
 	}
 }
