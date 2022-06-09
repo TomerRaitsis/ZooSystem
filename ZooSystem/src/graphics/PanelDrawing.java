@@ -1,6 +1,6 @@
 /**
    * @author 
-   * Tomer Raitsis 316160167
+   * Tomer Raitsis
    * SCE, Ashdod
    *    
    */
@@ -8,20 +8,17 @@ package graphics;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+
 import javax.swing.JPanel;
 
 import animals.Animal;
-import animals.Lion;
 import food.IEdible;
 import mobility.Point;
 import plants.Cabbage;
@@ -91,11 +88,12 @@ public class PanelDrawing extends JPanel {
 	public void paintAnimal(Graphics g, IEdible f) {
 		if (Animals != null) {
 			try {
-				for (int i = 0; i < Animals.size(); i++) {
-					Animals.get(i).loadImages(Animals.get(i).getColor());
+				for (int i = 0; i < Animals.size() && i < 10; i++) {
+					//Animals.get(i).loadImages(Animals.get(i).getColor());
 					Animals.get(i).drawObject(g);
 				}
-			} catch (IndexOutOfBoundsException e) {}
+			} catch (IndexOutOfBoundsException e) {
+			}
 		}
 
 		this.food = f;
@@ -127,6 +125,16 @@ public class PanelDrawing extends JPanel {
 	 */
 	public void setImage(BufferedImage i) {
 		imgSce = i;
+	}
+	
+	/**
+	 * A method that returns the image fo the background
+	 * 
+	 * @version 1.0
+	 * 
+	 */
+	public BufferedImage getImage() {
+		return imgSce;
 	}
 
 }

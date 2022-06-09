@@ -1,17 +1,18 @@
  /**
     * @author 
-    * Tomer Raitsis 316160167
+    * Tomer Raitsis
     * SCE, Ashdod
     */
 package food;
 
 /**
- *  An interface that represent edible objects
+ *  An interface that represent edible objects,
+ *  extends Cloneable- used to deep copy objects from this class
  * 
  * @version 1.0
  * 
  */
-public interface IEdible {
+public interface IEdible extends Cloneable {
 
 /**
  *  A method that returns the food type of an object that implements this interface
@@ -24,4 +25,16 @@ public interface IEdible {
  * 
  */
 	public EFoodType getFoodtype();
+	
+	/*
+	 * A method to set the object to null 
+	 */
+	public void SetNull();
+
+	/*
+	 * A method to clone an object
+	 */
+	public IEdible clone();
+	
+	
 }

@@ -1,6 +1,6 @@
 /**
    * @author 
-   * Tomer Raitsis 316160167
+   * Tomer Raitsis
    * SCE, Ashdod
    *    
    */
@@ -13,50 +13,61 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.AbstractTableModel;
+
+import DecoratorAnimalColor.ChangeColorGUI;
+import MementoDP.MementoGUI;
+import MementoDP.Originator;
+import MementoDP.Originator.Memento;
 import animals.Animal;
-import animals.Bear;
-import animals.Lion;
-import animals.Turtle;
-import food.EFoodType;
 import food.IEdible;
 import mobility.Point;
-import plants.Plant;
 
 /**
  * A panel that is devided to 2 different panels that work together: 1. buttons
  * 2. screen to show the animals and background
  * 
  */
-public class ZooPanel extends JPanel implements Runnable {
+public class ZooPanel extends JPanel {
 
-	private ArrayList<Animal> Animals = new ArrayList<Animal>();
+	private Originator originator = new Originator();
+	private ArrayList<Memento> memList = new ArrayList<Memento>();
 
-	JTable table = new JTable();
-	IEdible Food;
-	PanelDrawing p = new PanelDrawing(Animals, Food);
-	private Thread controller;
+	// IEdible Food;
+	PanelDrawing p = new PanelDrawing(getOriginator().Animals, getOriginator().Food);
+
+	// private controller;
+	private Controller cr = new Controller();
+
+	// singelton implementation for ZooPanel
+	private static ZooPanel ZooPanelOBJ = null;
+
+	public static ZooPanel getInstance() {
+		if (ZooPanelOBJ == null)
+			ZooPanelOBJ = new ZooPanel();
+		return ZooPanelOBJ;
+	}
+
+
+	public ArrayList<Animal> getAnimals() {
+		return getOriginator().Animals;
+	}
 
 	/**
 	 * A ctor, builds the two inner panels and sets the buttons
@@ -69,7 +80,7 @@ public class ZooPanel extends JPanel implements Runnable {
 	 * 
 	 * @see
 	 */
-	public ZooPanel() {
+	private ZooPanel() {
 		super();
 		this.setLayout(new BorderLayout());
 
@@ -91,7 +102,7 @@ public class ZooPanel extends JPanel implements Runnable {
 		dial.add(lab1);
 
 		JPanel panel = new JPanel();
-		JButton but1 = new JButton("Add Animal");
+		JButton but1 = new JButton("Add");
 		but1.setBackground(new Color(59, 89, 182));
 		but1.setForeground(Color.WHITE);
 		but1.setFocusPainted(false);
@@ -99,11 +110,10 @@ public class ZooPanel extends JPanel implements Runnable {
 		but1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (Animals.size() < 10) {
-					int size = Animals.size();
-					new AddAnimalDialog(Animals, getPan());
+				if (getOriginator().Animals.size() < 15) {
+					new AddAnimalDialog(getOriginator().Animals, getPan(), getOriginator().threadPoolExecutor, cr);
 				} else {
-					lab1.setText("You cannot add more than 10 animals");
+					lab1.setText("You cannot add more animals");
 					dial.setVisible(true);
 				}
 
@@ -118,8 +128,8 @@ public class ZooPanel extends JPanel implements Runnable {
 		but2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < Animals.size(); i++) {
-					Animals.get(i).setSuspended();
+				for (int i = 0; i < getOriginator().Animals.size(); i++) {
+					getOriginator().Animals.get(i).setSuspended();
 				}
 			}
 		});
@@ -132,10 +142,65 @@ public class ZooPanel extends JPanel implements Runnable {
 		but7.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < Animals.size(); i++) {
-					Animals.get(i).setResumed();
+				for (int i = 0; i < getOriginator().Animals.size(); i++) {
+					getOriginator().Animals.get(i).setResumed();
 
 				}
+
+			}
+		});
+
+		JButton but8 = new JButton("Change Color");
+		but8.setBackground(new Color(59, 89, 182));
+		but8.setForeground(Color.WHITE);
+		but8.setFocusPainted(false);
+		but8.setFont(new Font("Tahoma", Font.BOLD, 12));
+		but8.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (getOriginator().Animals.size() == 0)
+					JOptionPane.showMessageDialog(null, "There are no Animals!", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+				else {
+					synchronized (this) {
+						new ChangeColorGUI(getOriginator().Animals);
+					}
+				}
+			}
+		});
+
+		JButton but9 = new JButton("Save");
+		but9.setBackground(new Color(59, 89, 182));
+		but9.setForeground(Color.WHITE);
+		but9.setFocusPainted(false);
+		but9.setFont(new Font("Tahoma", Font.BOLD, 12));
+		but9.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (memList.size() == 3)
+					memList.remove(0);
+				int bg = -1;
+				if (p.getImage() != null)
+					bg = 1;
+				else if (p.getBackground() == Color.green)
+					bg = 2;
+				memList.add(getOriginator().save(bg, cr));
+			}
+		});
+
+		JButton but10 = new JButton("Load");
+		but10.setBackground(new Color(59, 89, 182));
+		but10.setForeground(Color.WHITE);
+		but10.setFocusPainted(false);
+		but10.setFont(new Font("Tahoma", Font.BOLD, 12));
+		but10.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (memList.size() == 0)
+					JOptionPane.showMessageDialog(null, "There are no saved states!", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+				else
+					new MementoGUI(memList, getOriginator(), getPan());
 
 			}
 		});
@@ -148,10 +213,12 @@ public class ZooPanel extends JPanel implements Runnable {
 		but3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < Animals.size(); i++) {
-					Animals.get(i).shut();
+				for (int i = 0; i < getOriginator().Animals.size(); i++) {
+					getOriginator().Animals.get(i).shut();
 				}
-				Animals.clear();
+				getOriginator().threadPoolExecutor.shutdown();
+				getOriginator().threadPoolExecutor = (ExecutorService) Executors.newFixedThreadPool(10);
+				getOriginator().Animals.clear();
 				repaint();
 
 			}
@@ -191,8 +258,8 @@ public class ZooPanel extends JPanel implements Runnable {
 		b1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Food = new Lettuce();
-				((Lettuce) Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
+				getOriginator().Food = Lettuce.getInstance();
+				((Lettuce) getOriginator().Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
 				FoodDialog.dispose();
 				repaint();
 				// manageZoo();
@@ -206,12 +273,10 @@ public class ZooPanel extends JPanel implements Runnable {
 		b2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Food = new Cabbage();
-				((Cabbage) Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
+				getOriginator().Food = Cabbage.getInstance();
+				((Cabbage) getOriginator().Food).setLocation(new Point(p.getWidth() / 2, p.getHeight() / 2));
 				FoodDialog.dispose();
-				;
 				repaint();
-				// manageZoo();
 			}
 		});
 		JButton b3 = new JButton("Meat");
@@ -222,16 +287,10 @@ public class ZooPanel extends JPanel implements Runnable {
 		b3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IEdible meat = new IEdible() {
-					public EFoodType getFoodtype() {
-						return EFoodType.MEAT;
-					}
-				};
-				Food = meat;
+
+				getOriginator().Food = meat.getInstance();
 				FoodDialog.dispose();
-				;
 				repaint();
-				// manageZoo();
 			}
 		});
 		foods.add(b1);
@@ -255,7 +314,7 @@ public class ZooPanel extends JPanel implements Runnable {
 		but5.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InfoTable window = new InfoTable(Animals);
+				InfoTable window = new InfoTable(getOriginator().Animals);
 				window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			}
 		});
@@ -268,29 +327,31 @@ public class ZooPanel extends JPanel implements Runnable {
 		but6.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < Animals.size(); i++) {
-					Animals.get(i).shut();
+				for (int i = 0; i < getOriginator().Animals.size(); i++) {
+					getOriginator().Animals.get(i).shut();
 				}
+				getOriginator().threadPoolExecutor.shutdown();
 				System.exit(0);
 			}
 		});
 
 		panel.setBackground(Color.DARK_GRAY);
-		panel.setLayout(new GridLayout(1, 7, 10, 5));
+		panel.setLayout(new FlowLayout());// GridLayout(1, 8, 5, 5));
 		panel.add(but1);
+		panel.add(but8);
+		panel.add(but3);
 		panel.add(but2);
 		panel.add(but7);
-		panel.add(but3);
 		panel.add(but4);
+		panel.add(but9);
+		panel.add(but10);
 		panel.add(but5);
 		panel.add(but6);
 		this.add(panel, BorderLayout.SOUTH);
-		p = new PanelDrawing(Animals, Food);
+		p = new PanelDrawing(getOriginator().Animals, getOriginator().Food);
 		p.setLayout(null);
 		this.add(p, BorderLayout.CENTER);
 
-		this.controller = new Thread(this);
-		this.controller.start();
 	}
 
 	/**
@@ -302,6 +363,7 @@ public class ZooPanel extends JPanel implements Runnable {
 	public void ChangeBackgroudToGreen() {
 		p.setImage(null);
 		this.p.setBackground(Color.green);
+
 	}
 
 	/**
@@ -353,6 +415,16 @@ public class ZooPanel extends JPanel implements Runnable {
 		return this;
 	}
 
+	public void setPanelDrawing(ArrayList<Animal> a, IEdible f) {
+
+		this.remove(p);
+		this.p = new PanelDrawing(a, f);
+		p.setLayout(null);
+		p.setBounds(0, 0, this.getWidth(), this.getHeight() - 35);
+		this.add(p, BorderLayout.CENTER);
+
+	}
+
 	/**
 	 * A method that checks if there's been a change in any animal
 	 * 
@@ -361,16 +433,15 @@ public class ZooPanel extends JPanel implements Runnable {
 	 * @return True if changed, false if isn't
 	 */
 	public boolean isChange() {
-		for (int i = 0; i < Animals.size(); i++) {
-			if (Animals.get(i).getChanges()) {
-				Animals.get(i).setChanges(false);
+		for (int i = 0; i < getOriginator().Animals.size(); i++) {
+			if (getOriginator().Animals.get(i).getChanges()) {
+				getOriginator().Animals.get(i).setChanges(false);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	
 	/**
 	 * An override to paintComponent, shows the background, animals and food on the
 	 * screen that shows the animals and background
@@ -383,7 +454,7 @@ public class ZooPanel extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		p.repaint();
-		p.paintAnimal(g, Food);
+		p.paintAnimal(g, getOriginator().Food);
 	}
 
 	/**
@@ -394,96 +465,24 @@ public class ZooPanel extends JPanel implements Runnable {
 	 * @return true if suspended, false if not
 	 */
 	public synchronized boolean CheckIfSuspended() {
-		for (int i = 0; i < Animals.size(); i++) {
-			if (Animals.get(i).isTreadSuspended())
+		for (int i = 0; i < getOriginator().Animals.size(); i++) {
+			if (getOriginator().Animals.get(i).isTreadSuspended())
 				return true;
 		}
 		return false;
 	}
 
+
 	/**
-	 * A run method, for the controller, this thread starts to run at the end of the Ctor
-	 * 
-	 * Checks if there are any animals that can eat each other, or if an animal eats the
-	 * food at the center (if not the animal will keep moving) and it will move to it until 
-	 * it is close enough to eat it or another animal ate ot first 
+	 * A method that returns the originator.
 	 * 
 	 * @version 1.0
 	 * 
+	 * @return Originator object of this class
 	 */
-	@Override
-	public void run() {
-		while (true) {
-			if (!CheckIfSuspended()) {
-				boolean c = false;
-
-				if (isChange())
-						this.repaint();
-				
-				for (int i = 0; i < Animals.size(); i++) {
-					Animal a = Animals.get(i);
-
-					for (int j = 0; j < Animals.size(); j++) {
-						Animal b = Animals.get(j);
-
-						if (a != b) {
-							if (a.getWeight() > (2 * b.getWeight())) {
-								if (a.calcDistance(b.getLocation()) < b.getSize()) {
-											if (a.eat(b)) {
-												a.eatInc();
-												b.shut();
-												Animals.remove(b);
-												c = true;
-												break;
-											}
-								}
-							}
-						}
-					}
-					if (c)
-						break;
-
-				}
-				
-				if (Food != null) {
-					
-					for (int i = 0; i < Animals.size(); i++) {
-						Animal a = Animals.get(i);
-						
-							if (a.getDiet().canEat(Food.getFoodtype())) {
-								a.setToCenter();
-								if (Math.abs(a.getLocation().GetX() - (400)) <= a.getEAT_DISTANCE()
-										&& Math.abs(a.getLocation().GetY() - (300)) <= a.getEAT_DISTANCE()) {
-
-									if (a.eat(Food)) {
-										a.eatInc();
-
-										a.setbackX();
-										a.setY_dir(1);
-
-										
-										for (int j = 0; j < Animals.size(); j++) {
-											Animal d = Animals.get(j);
-											if (i != j && d.getDiet().canEat(Food.getFoodtype())) {
-												d.setbackX();
-												d.setY_dir(-1);
-											} 
-										}
-										Food = null;
-										break;
-									}
-								}
-							} else {
-								if (!a.getFlag().get()) {
-									a.setFlag(true);
-									a.setY_dir(1);
-								}
-							}
-						
-					}
-				}
-				
-			}
-		}
+	public Originator getOriginator() {
+		return originator;
 	}
+
+
 }

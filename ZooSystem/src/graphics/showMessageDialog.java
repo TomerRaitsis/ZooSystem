@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis 316160167
+    * Tomer Raitsis
     * SCE, Ashdod
     *    
     */
@@ -9,15 +9,15 @@ package graphics;
 import java.awt.Color;
 
 import java.awt.Dimension;
-import java.awt.Font;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+
 import javax.swing.JDialog;
-import javax.swing.JFrame;
+
 
 /**
  *  A dialog that shows a message to the user, extends JDialog.

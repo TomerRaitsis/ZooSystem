@@ -1,47 +1,43 @@
- /**
-    * @author 
-    * Tomer Raitsis 316160167
-    * SCE, Ashdod
-    *    
-    */
+/**
+   * @author 
+   * Tomer Raitsis 316160167
+   * SCE, Ashdod
+   *    
+   */
 package graphics;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
-import java.lang.Object;
+
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
+import java.util.Observer;
+import java.util.concurrent.ExecutorService;
+
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import AbstractFactory.AbstractFac;
+import AbstractFactory.FactoryProducer;
 import animals.Animal;
-import animals.Bear;
-import animals.Elephant;
-import animals.Giraffe;
-import animals.Lion;
-import animals.Turtle;
 
 /**
  * A dialog for creating a new animal, the user will pick a type, name (or
@@ -62,10 +58,10 @@ public class AddAnimalDialog extends JDialog {
 	 * 
 	 * @param Animals - ArrayList<Animal>, zp - ZooPanel
 	 */
-	public AddAnimalDialog(ArrayList<Animal> Animals, ZooPanel zp) {
+	public AddAnimalDialog(ArrayList<Animal> Animals, ZooPanel zp,ExecutorService threadPoolExecutor, Observer ob) {
 		super();
 		this.setTitle("Add Animal Dialog");
-		this.setLayout(new GridLayout(8, 1, 0, 20));
+		this.setLayout(new GridLayout(9, 1, 0, 20));
 		this.setSize(new Dimension(500, 400));
 		this.getContentPane().setBackground(Color.DARK_GRAY);
 		this.setLocationRelativeTo(zp);
@@ -77,8 +73,39 @@ public class AddAnimalDialog extends JDialog {
 		}
 		this.setVisible(true);
 
-		String animalNames[] = { "Please choose an animal", "Lion", "Bear", "Elephant", "Giraffe", "Turtle" };
-		JComboBox cb1 = new JComboBox(animalNames);
+		String Carnivores[] = { "Please choose an animal", "Lion" };
+		String Omnivores[] = { "Please choose an animal", "Bear" };
+		String Herbivores[] = { "Please choose an animal", "Elephant", "Giraffe", "Turtle" };
+		JComboBox cb1 = new JComboBox(Carnivores);
+		String DietNames[] = { "Carnivore", "Herbivore", "Omnivore" };
+		JComboBox cb5 = new JComboBox(DietNames);
+		cb5.setFont(new Font("San Francisco", Font.PLAIN, 18));
+		cb5.setBounds(0, 0, 100, 100);
+		cb5.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (cb5.getSelectedItem().equals("Carnivore")) {
+					cb1.removeAllItems();
+					for (String string : Carnivores) {
+						cb1.addItem(string);
+					}
+
+				} else if (cb5.getSelectedItem().equals("Herbivore")) {
+					cb1.removeAllItems();
+					for (String string : Herbivores) {
+						cb1.addItem(string);
+					}
+
+				} else {
+					cb1.removeAllItems();
+					for (String string : Omnivores) {
+						cb1.addItem(string);
+					}
+				}
+
+			}
+		});
+
 		cb1.setFont(new Font("San Francisco", Font.PLAIN, 18));
 		cb1.setBounds(0, 0, 100, 100);
 
@@ -134,12 +161,15 @@ public class AddAnimalDialog extends JDialog {
 		cb1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!((String) cb1.getSelectedItem()).equals("Please choose an animal")) {
-					tf.setForeground(Color.black);
-					tf.setBackground(Color.RED);
-					tf.setText("Insert " + cb1.getSelectedItem() + "'s size (in pixels)" + ",Press enter when done!");
-				} else
-					tf.setText((String) cb1.getSelectedItem());
+				if (cb1.getSelectedItem() != null) {
+					if (!((String) cb1.getSelectedItem()).equals("Please choose an animal")) {
+						tf.setForeground(Color.black);
+						tf.setBackground(Color.RED);
+						tf.setText(
+								"Insert " + cb1.getSelectedItem() + "'s size (in pixels)" + ",Press enter when done!");
+					} else
+						tf.setText((String) cb1.getSelectedItem());
+				}
 			}
 		});
 		tf.setOpaque(true);
@@ -223,54 +253,14 @@ public class AddAnimalDialog extends JDialog {
 						String name;
 						String s = cb1.getSelectedItem().toString();
 						setVisible(false);
-						switch (s) {
-						case "Lion":
-							if (check)
-								name = "Lion";
-							else
-								name = tf2.getText();
-							a = new Lion(name, Integer.parseInt(tf.getText()),
-									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
-							break;
-						case "Bear":
-							if (check)
-								name = "Bear";
-							else
-								name = tf2.getText();
-							a = new Bear(name, Integer.parseInt(tf.getText()),
-									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
-							break;
-						case "Elephant":
-							if (check)
-								name = "Elephant";
-							else
-								name = tf2.getText();
-							a = new Elephant(name, Integer.parseInt(tf.getText()),
-									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
-							break;
-						case "Giraffe":
-							if (check)
-								name = "Giraffe";
-							else
-								name = tf2.getText();
-							a = new Giraffe(name, Integer.parseInt(tf.getText()),
-									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
-							break;
-						case "Turtle":
-							if (check)
-								name = "Turtle";
-							else
-								name = tf2.getText();
-							a = new Turtle(name, Integer.parseInt(tf.getText()),
-									Integer.parseInt(cb2.getSelectedItem().toString()),
-									Integer.parseInt(cb3.getSelectedItem().toString()), c,zp);
-							break;
-							
-						}
+
+						// Using Abstrack Factory DP to create an animal
+						AbstractFac Af = FactoryProducer.getFactory((String) cb5.getSelectedItem());
+						name = tf2.getText();
+						a = Af.getAnimal((String) cb1.getSelectedItem(), name, Integer.parseInt(tf.getText()),
+								Integer.parseInt(cb2.getSelectedItem().toString()),
+								Integer.parseInt(cb3.getSelectedItem().toString()), c, zp);
+
 
 						JFrame f = new JFrame();
 						f.setLayout(new BorderLayout());
@@ -291,17 +281,15 @@ public class AddAnimalDialog extends JDialog {
 						bt.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								
+
 								a.setChanges(true);
-								//a.setPan(zp);
+								a.getob().addObserver(ob);
 								Animals.add(a);
 								zp.repaint();
 								if (zp.CheckIfSuspended())
 									a.setSuspended();
-								a.setThread(new Thread(a));
-								a.getThread().start();
-								
-								
+								threadPoolExecutor.execute(a);
+
 								f.dispose();
 								dispose();
 							}
@@ -321,6 +309,7 @@ public class AddAnimalDialog extends JDialog {
 		});
 
 		this.add(lab);
+		this.add(cb5);
 		this.add(cb1);
 		this.add(tf2);
 		this.add(tf);
@@ -330,4 +319,5 @@ public class AddAnimalDialog extends JDialog {
 		this.add(but1);
 
 	}
+
 }

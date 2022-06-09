@@ -1,12 +1,11 @@
 /**
    * @author 
-   * Tomer Raitsis 316160167
+   * Tomer Raitsis 
    * SCE, Ashdod
    */
 package animals;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,10 +13,10 @@ import javax.imageio.ImageIO;
 
 import diet.Herbivore;
 import food.EFoodType;
+import food.IEdible;
 import graphics.IDrawable;
 import graphics.ZooPanel;
 import mobility.Point;
-import utilities.MessageUtility;
 
 /**
  * A class that represents an Turtle, it extends ChewAnimal has 1 attribute: Age
@@ -39,10 +38,20 @@ public class Turtle extends ChewAnimal {
 	 */
 	public Turtle(String s, Point p) {
 		super(s, p);
-		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(1);
 		this.setAge(1);
 		this.setDiet(new Herbivore());
+	}
+	
+	@Override
+	public synchronized IEdible clone()  {
+		Animal temp =  new Turtle(this.getName(),this.getSize(),this.getHorSpeed(),this.getVerSpeed(),this.getCol(),this.getPan());
+		temp.setWeight(getWeight());
+		temp.setLocation(getLocation());
+		temp.setEatCount(getEatCount());
+		temp.setX_dir(getX_dir());
+		temp.setY_dir(getY_dir());
+		return temp;
 	}
 
 	public Turtle(String s, int size, int horSpeed, int verSpeed, Color col,ZooPanel zp) {
@@ -53,6 +62,7 @@ public class Turtle extends ChewAnimal {
 		this.setCol(col);
 		this.setWeight(size * 0.5);
 		this.setPan(zp);
+		this.loadImages(getColor());
 	}
 
 	/**
@@ -76,7 +86,6 @@ public class Turtle extends ChewAnimal {
 	 */
 	public Turtle(String s, int i) {
 		super(s, new Point(80, 0));
-		//MessageUtility.logConstractor(this.getClass().getSimpleName(), s);
 		this.setWeight(1);
 		this.setAge(i);
 		this.setDiet(new Herbivore());
@@ -93,7 +102,6 @@ public class Turtle extends ChewAnimal {
 	 */
 	@Override
 	public EFoodType getFoodtype() {
-		//MessageUtility.logGetter(this.getName(), "getFoodtype", EFoodType.MEAT);
 		return EFoodType.MEAT;
 	}
 
@@ -107,7 +115,6 @@ public class Turtle extends ChewAnimal {
 	 * @return double for the age
 	 */
 	public double getAge() {
-		//MessageUtility.logGetter(this.getName(), "getAge", Age);
 		return Age;
 	}
 
@@ -129,7 +136,6 @@ public class Turtle extends ChewAnimal {
 			this.Age = Age;
 		else
 			this.Age = 1;
-		//MessageUtility.logSetter(this.getName(), "setAge", Age, isSuccess);
 		return isSuccess;
 	}
 
@@ -143,7 +149,6 @@ public class Turtle extends ChewAnimal {
 	 * @return None (void)
 	 */
 	public void chew() {
-		//MessageUtility.logSound(this.getName(), "Retracts its head in then eats quietly");
 	}
 
 	@Override

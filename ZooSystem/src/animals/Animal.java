@@ -8,15 +8,16 @@ package animals;
 
 import mobility.Mobile;
 import mobility.Point;
-import utilities.MessageUtility;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import DecoratorAnimalColor.ColorChange;
 import diet.IDiet;
 import diet.Omnivore;
 import food.IEdible;
@@ -31,11 +32,10 @@ import graphics.ZooPanel;
  * @version 1.0
  * 
  */
-public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnimalBehavior, Runnable {
+public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnimalBehavior, Runnable, ColorChange {
 	private String name;
 	private double weight;
 	private IDiet diet;
-
 	private final int EAT_DISTANCE = 10;
 	private int size;
 	private Color col;
@@ -51,9 +51,18 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	private AtomicBoolean flagforpreX = new AtomicBoolean(true);
 	private int preX = 1;
 
-	protected Thread thread;
+	//protected Thread thread;
 	protected boolean threadSuspended = false;
+	
+	private Observable ob = new Observable(){
+		public void notifyObservers(Object arg) {
+			super.setChanged();
+			super.notifyObservers(arg);
+		}
+	};
 
+	public Observable getob() {return ob;}
+	
 	/**
 	 * A Ctor, also calls the super Ctor (Mobility Ctor)
 	 * 
@@ -65,11 +74,15 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	 */
 	public Animal(String S, Point P) {
 		super(P);
-		// MessageUtility.logConstractor("Animal", S);
 		this.setName(S);
 		running.set(true);
 	}
 
+	@Override
+	public synchronized IEdible clone()  {
+		return null;
+	}
+	
 	/**
 	 * A method that returns the animal's name.
 	 * 
@@ -81,7 +94,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	 * 
 	 */
 	public String getName() {
-		// MessageUtility.logGetter(this.name, "getName", this.name);
 		return this.name;
 	}
 
@@ -104,7 +116,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 			this.name = name;
 		else
 			this.name = new String("Anonymous");
-		// MessageUtility.logSetter(this.getName(), "setName", name, isSuccess);
 		return isSuccess;
 	}
 
@@ -121,7 +132,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	 * @see
 	 */
 	public double getWeight() {
-		// MessageUtility.logGetter(this.getName(), "getWeight", weight);
 		return weight;
 	}
 
@@ -139,7 +149,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 		boolean isSuccess = weight > 0;
 		if (isSuccess)
 			this.weight = weight;
-		// MessageUtility.logSetter(this.getName(), "setWeight", weight, isSuccess);
 		return isSuccess;
 	}
 
@@ -154,7 +163,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	 * 
 	 */
 	public IDiet getDiet() {
-		// MessageUtility.logGetter(this.getName(), "getDiet", diet);
 		return diet;
 	}
 
@@ -176,7 +184,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 			this.diet = diet;
 		else
 			this.diet = new Omnivore();
-		// MessageUtility.logSetter(this.getName(), "setDiet", diet, isSuccess);
 		return isSuccess;
 
 	}
@@ -194,13 +201,14 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	 * 
 	 */
 	public boolean eat(IEdible E) {
+		if (E == null)
+			return false;
 		double d = this.diet.eat(this, E);
 		boolean isSuccess = d != 0;
 		if (isSuccess) {
 			this.setWeight(this.getWeight() + d);
 			this.makeSound();
 		}
-		// MessageUtility.logBooleanFunction(this.getName(), "eat", E, isSuccess);
 		return isSuccess;
 
 	}
@@ -685,31 +693,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 		notify();
 	}
 
-	/**
-	 * A method that returns the animals thread.
-	 * 
-	 * @version 1.0
-	 * 
-	 * @param
-	 * 
-	 * @return Thread - the thread variable of a object
-	 * 
-	 */
-	public Thread getThread() {
-		return this.thread;
-	}
-
-	/**
-	 * A method that sets the animals thread.
-	 * 
-	 * @version 1.0
-	 * 
-	 * @param t - A Thread 
-	 * 
-	 */
-	public void setThread(Thread t) {
-		this.thread = t;
-	}
 
 	/**
 	 * A method returns the value of the threadSuspended attribute
@@ -738,7 +721,6 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 	@Override
 	public void run() {
 		while (running.get()) {
-
 			synchronized (this) {
 				while (isTreadSuspended()) {
 					try {
@@ -775,23 +757,25 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 			else if (newLocY >= pHeight - 60 && this.getY_dir() == 1)
 				nextDiry = -1;
 			
-			synchronized (this) {
+			synchronized (Animal.class) {
 				if (nextDirx != -2)
 					this.setX_dir(nextDirx);
 				if (nextDiry != -2)
 					this.setY_dir(nextDiry);
 				this.move(new Point(newLocX, newLocY));
-				this.setChanges(true);
-			}
 
+				this.setChanges(true);
+				ob.notifyObservers(this.getPan());
+				
+			}
+			
 			try {
 				Thread.sleep(70);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+			
 		}
-		//this.getThread().interrupt();
 	}
 
 	/**
@@ -875,5 +859,8 @@ public abstract class Animal extends Mobile implements IEdible, IDrawable, IAnim
 		}
 
 	}
-
+	
+	public void SetNull() {}
+	
+	public void changeColor() {}
 }

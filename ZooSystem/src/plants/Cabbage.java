@@ -6,19 +6,27 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import food.IEdible;
 import graphics.IDrawable;
-import utilities.MessageUtility;
 
-/**
- * @author baroh
- *
- */
 public class Cabbage extends Plant {
-	public Cabbage() {
-		//MessageUtility.logConstractor("Cabbage", "Cabbage");
+
+	// singelton implementation for Cabbage
+	private static Cabbage CabbagelOBJ = null;
+
+	public static Cabbage getInstance() {
+		if (CabbagelOBJ == null)
+			CabbagelOBJ = new Cabbage();
+		return CabbagelOBJ;
+	}
+	public void SetNull() {CabbagelOBJ = null;}
+	private Cabbage() {
 	}
 
-
+	
+	/*
+	 * An Override of IDrawable interface method
+	 */
 	@Override
 	public void drawObject(Graphics g) {
 		try {
@@ -29,6 +37,14 @@ public class Cabbage extends Plant {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/*
+	 * An Override of IEdible interface method
+	 */
+	@Override
+	public IEdible clone()  {
+		return Cabbage.getInstance();
 	}
 
 }

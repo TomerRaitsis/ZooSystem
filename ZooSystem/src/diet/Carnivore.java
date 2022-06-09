@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis 316160167
+    * Tomer Raitsis
     * SCE, Ashdod
     */
 package diet;
@@ -8,7 +8,6 @@ package diet;
 import animals.Animal;
 import food.EFoodType;
 import food.IEdible;
-import utilities.MessageUtility;
 
 /**
  *  A class that implements IDiet interface, this class is a type of a diet that eats meat

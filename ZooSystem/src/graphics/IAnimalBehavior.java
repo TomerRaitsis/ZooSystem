@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis 316160167
+    * Tomer Raitsis
     * SCE, Ashdod
     *    
     */
@@ -70,7 +70,21 @@ public interface IAnimalBehavior {
 	 */
 	public void setChanges(boolean state);
 	
+	/**
+	 * A method to set threadSuspended attribute to true
+	 * 
+	 * @version 1.0
+	 * 
+	 * @return threadSuspended (boolean)
+	 */
 	public void setSuspended();
 	
+	/**
+	 * A method to set threadSuspended attribute to false
+	 * 
+	 * @version 1.0
+	 * 
+	 * @return Changes (boolean)
+	 */
 	public void setResumed();
 }

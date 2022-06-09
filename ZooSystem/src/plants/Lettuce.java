@@ -1,26 +1,33 @@
 package plants;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import food.IEdible;
 import graphics.IDrawable;
-import graphics.PanelDrawing;
-import utilities.MessageUtility;
 
-/**
- * @author baroh
- *
- */
 public class Lettuce extends Plant {
-	public Lettuce() {
-		//MessageUtility.logConstractor("Lettuce", "Lettuce");
-	}
+	
+	// singelton implementation for Cabbage
+	private static Lettuce LettuceOBJ = null;
 
+	public static Lettuce getInstance() {
+		if (LettuceOBJ == null)
+			LettuceOBJ = new Lettuce();
+		return LettuceOBJ;
+	}
+	
+	private Lettuce() {
+	}
+	
+	public void SetNull() {LettuceOBJ = null;}
+	
+	/*
+	 * An Override of IDrawable interface method
+	 */
 	@Override
 	public void drawObject(Graphics g) {
 		try {
@@ -31,6 +38,14 @@ public class Lettuce extends Plant {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/*
+	 * An Override of IEdible interface method
+	 */
+	@Override
+	public IEdible clone()  {
+		return Lettuce.getInstance();
 	}
 
 }

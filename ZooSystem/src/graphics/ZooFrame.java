@@ -1,6 +1,6 @@
  /**
     * @author 
-    * Tomer Raitsis 316160167
+    * Tomer Raitsis
     * SCE, Ashdod
     *    
     */
@@ -109,7 +109,7 @@ public class ZooFrame extends JFrame implements ActionListener {
 		mb.add(Help);
 
 		this.setJMenuBar(mb);
-		panel = new ZooPanel();
+		panel = ZooPanel.getInstance();
 		this.add(panel);
 		
 		this.setSize(800, 700);
